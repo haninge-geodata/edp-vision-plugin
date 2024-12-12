@@ -31,3 +31,8 @@ A plugin to connect [Origo-map](https://github.com/origo-map/origo) with EDP Vis
 	</script>
 </body>
 ```
+Get coordinates with the cross hair tool 
+![hårkors](image.png)
+
+Get several realestates with the multiselect tool
+![selektera](image-1.png)
