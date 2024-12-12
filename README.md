@@ -1,2 +1,33 @@
-# edp-vision-plugin
+# EDP Vision plugin
 A plugin to connect Origo-map with EDP Visions "Integrations API GIS-koppling (Kubb)"
+
+# Example index.html
+```
+<body>
+	<div id="app-wrapper"></div>
+	<script src="js/origo.js"></script>
+	<script src="plugins/edp-vision-plugin/edp_vision.min.js"></script>
+	<script type="text/javascript">
+		//Init origo
+		var origo = Origo('index.json');
+		var edpVision = EdpVision({
+			user: '',
+			organisation: '',
+			clientName: '',
+			path: '',
+			serverAddress: '',
+            realEstateLayer: {
+                layerName: '',
+                attributes: {
+                    objectId: '',
+                    realEstateName: '',
+                    municipality: ''
+                }
+            }
+		});
+		origo.on('load', function (viewer) {
+			viewer.addComponent(edpVision);
+		});
+	</script>
+</body>
+```
