@@ -10,23 +10,22 @@ A plugin to connect [Origo-map](https://github.com/origo-map/origo) with EDP Vis
 	<script type="text/javascript">
 		//Init origo
 		var origo = Origo('index.json');
-		var edpVision = EdpVision({
-			user: '', // Default is sessionStorage.getItem('oidc_user')).displayname
-			organisation: '',
-			clientName: '',
-			path: '',
-			serverAddress: '',
-			realEstateLayer: {
-				layerName: '',
-				attributes: {
-					objectId: '',
-					realEstateName: '',
-					municipality: ''
-				}
-			}
-		});
 		origo.on('load', function (viewer) {
-			viewer.addComponent(edpVision);
+			EdpVision({
+				user: '', // Default is sessionStorage.getItem('oidc_user')).displayname
+				organisation: '',
+				clientName: '',
+				path: '',
+				serverAddress: '',
+				realEstateLayer: {
+					layerName: '',
+					attributes: {
+						objectId: '',
+						realEstateName: '',
+						municipality: ''
+					}
+				}
+		  });
 		});
 	</script>
 </body>
