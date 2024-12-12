@@ -19,9 +19,9 @@ A plugin to connect [Origo-map](https://github.com/origo-map/origo) with EDP Vis
 			realEstateLayer: {
 				layerName: '',
 				attributes: {
-						objectId: '',
-						realEstateName: '',
-						municipality: ''
+					objectId: '',
+					realEstateName: '',
+					municipality: ''
 				}
 			}
 		});
