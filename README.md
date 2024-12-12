@@ -17,12 +17,12 @@ A plugin to connect [Origo-map](https://github.com/origo-map/origo) with EDP Vis
 			path: '',
 			serverAddress: '',
 			realEstateLayer: {
-					layerName: '',
-					attributes: {
-							objectId: '',
-							realEstateName: '',
-							municipality: ''
-					}
+				layerName: '',
+				attributes: {
+						objectId: '',
+						realEstateName: '',
+						municipality: ''
+				}
 			}
 		});
 		origo.on('load', function (viewer) {
