@@ -16,6 +16,7 @@ const EdpVision = function EdpVision(options = {}) {
     : user;
   const query = "?user=" + userId + "&organisation=" + organisation + "&client=" + clientName + "&clientType=External";
   const url = serverAddress + path + query;
+  // Delay helper
   const delay = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
   // Connect with SignalR
@@ -33,9 +34,14 @@ const EdpVision = function EdpVision(options = {}) {
     const features = await wfsSource.getFeaturesFromSource(null, filter, false);
     const selectionGroup = realEstateLayer.layerName;
     const selectionGroupTitle = window.origo.api().getLayer(realEstateLayer.layerName).get('title');
-    features.forEach((feature) =>
-      selectedItems.push(new Origo.SelectedItem(feature, window.origo.api().getLayer(realEstateLayer.layerName), window.origo.api().getMap(), selectionGroup, selectionGroupTitle)));
-    window.origo.api().getSelectionManager().addItems(selectedItems)
+    features.forEach((feature) => {
+      selectedItems.push(new Origo.SelectedItem(feature, window.origo.api().getLayer(realEstateLayer.layerName), window.origo.api().getMap(), selectionGroup, selectionGroupTitle))
+    });
+    window.origo.api().getSelectionManager().addItems(selectedItems);
+    const feature = features[0];
+    if (feature) {
+      window.origo.api().zoomToExtent(feature.getGeometry());
+    }
   };
 
   connection.on('HandleRealEstateIdentifiers', async function (realEstates) {
@@ -44,7 +50,7 @@ const EdpVision = function EdpVision(options = {}) {
 
   connection.on('HandleAskingForRealEstateIdentifiers', async function () {
     // TOAST Välj fastighet/fastigheter
-    const getSelectedFeatures = window.origo.api().getSelectionManager().getUrval().get('v_registerenhet_yta_smohf').getFeatures();
+    const getSelectedFeatures = window.origo.api().getSelectionManager().getUrval().get(realEstateLayer.layerName).getFeatures();
     const realEstateIdentifiers = getSelectedFeatures.map(f => ({
       Name: f.get(realEstateLayer.attributes.realEstateName),
       Municipality: f.get(realEstateLayer.attributes.municipality),
@@ -55,20 +61,20 @@ const EdpVision = function EdpVision(options = {}) {
   });
 
   // Handling of coordinates
-  function centerMapByCoordinate(easting, northing, zoom) {
+  function centerMapByCoordinate(northing, easting, zoom) {
     const view = window.origo.api().getMap().getView();
-    view.setCenter([northing, easting]);
+    view.setCenter([easting, northing]);
     view.setZoom(zoom);
   };
 
   connection.on('HandleCoordinates', function (coordinates) {
-    centerMapByCoordinate(coordinates[0].easting, coordinates[0].northing, 15);
+    centerMapByCoordinate(coordinates[0].northing, coordinates[0].easting, 15);
   });
 
   connection.on('HandleAskingForCoordinates', async function () {
     const mapCenter = window.origo.api().getMap().getView().getCenter();
-    const n = mapCenter[0];
-    const e = mapCenter[1];
+    const n = mapCenter[1];
+    const e = mapCenter[0];
     const srid = window.origo.api().getProjectionCode().replace('EPSG:', '');
     const coords = [{ Northing: n, Easting: e, SpatialReferenceSystemIdentifier: Number(srid) }];
     const el = document.getElementsByClassName('o-position-coords')[0];
@@ -76,7 +82,7 @@ const EdpVision = function EdpVision(options = {}) {
       await delay(2000);
       connection.invoke('SendCoordinates', coords.length ? coords : null);
     } else {
-      console.warn('Aktivera hårkorset för att bestämma koordinaterna');
+      alert('Aktivera hårkorset för att bestämma koordinaterna att hämta.');
       connection.invoke('SendCoordinates', null);
     }
   });
@@ -92,9 +98,6 @@ const EdpVision = function EdpVision(options = {}) {
     .then(() => console.info(`Ansluten till ${serverAddress} som ${userId}@${organisation}`))
     .catch(err => console.error(`Misslyckades med att ansluta till ${serverAddress}.`, err));
 
-  return Origo.ui.Component({
-    name: 'edpvision'
-  });
 };
 
 export default EdpVision;
